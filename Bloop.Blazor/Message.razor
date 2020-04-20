@@ -1,0 +1,78 @@
+﻿@implements IMessage
+
+@typeparam TValidationData
+
+<br />
+
+@foreach (Validation.Analysis result in Results.Where(result => !result.Positive))
+{
+    @ChildContent(result)
+    <br />
+}
+
+@code
+{
+    [CascadingParameter(Name = "Validator")]
+    public IValidator Validator
+    {
+        set
+        {
+            ValidatorStateModificationHandler = value.StateModificationHandler;
+            value.Messages.Add(this);
+        }
+    }
+
+    Action ValidatorStateModificationHandler { get; set; }
+
+    [Parameter]
+    public Validation<TValidationData>.Set Validations
+    {
+        set
+        {
+            if (value is { } && (Reference is null || Reference != value))
+            {
+                System.Diagnostics.Debug.WriteLine("Processor was built.");
+                Processor ??= (Reference = value).BuildProcessor();
+            }
+        }
+    }
+
+    [Parameter]
+    public TValidationData Data
+    {
+        get => StoredData;
+        set
+        {
+            if (!Object.Equals(value, StoredData))
+            {
+                StoredData = value;
+                Altered = true;
+            }
+        }
+    }
+
+    [Parameter]
+    public RenderFragment<Validation.Analysis> ChildContent { get; set; } = result =>@<span style="font-weight: bold; color: @(result.Positive ? "darkgreen" : "darkred")">@result.Message</span>;
+
+    TValidationData StoredData { get; set; }
+
+    Validation<TValidationData>.Set Reference { get; set; }
+
+    Validation<TValidationData>.Processor Processor { get; set; }
+
+    bool Altered { get; set; } = true;
+
+    IEnumerable<Validation.Analysis> StoredResults { get; set; }
+
+    IEnumerable<Validation.Analysis> GetResults()
+    {
+        Altered = false;
+
+        StoredResults = Processor.Invoke(Data);
+        ValidatorStateModificationHandler.Invoke();
+
+        return StoredResults;
+    }
+
+    public IEnumerable<Validation.Analysis> Results => Altered ? GetResults() : StoredResults;
+}
