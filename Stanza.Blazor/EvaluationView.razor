@@ -1,0 +1,84 @@
+﻿@implements IEvaluationView
+
+@typeparam TValidationData
+
+<br />
+
+@foreach (Evaluation evaluation in Results.Where(evaluation => evaluation.Information is { }))
+{
+    @ChildContent(evaluation)
+    <br />
+}
+
+@code
+{
+    [CascadingParameter(Name = "Gate")]
+    public IGate Gate
+    {
+        set
+        {
+            ValidatorStateModificationHandler = value.StateModificationHandler;
+            value.ChildEvaluationViews.Add(this);
+        }
+    }
+
+    Action ValidatorStateModificationHandler { get; set; }
+
+    [Parameter]
+    public string Identifier { get; set; } = "Data";
+
+    [Parameter]
+    public bool DisableContextAwareIdentifierModification { get; set; }
+
+    [Parameter]
+    public Validation<TValidationData> Validations
+    {
+        set
+        {
+            if (value is { } && (Reference is null || Reference != value))
+            {
+                System.Diagnostics.Debug.WriteLine("Processor was built.");
+                Evaluator ??= (Reference = value).BuildEvaluator();
+            }
+        }
+    }
+
+    [Parameter]
+    public TValidationData Data
+    {
+        get => StoredData;
+        set
+        {
+            if (!Object.Equals(value, StoredData))
+            {
+                StoredData = value;
+                Altered = true;
+            }
+        }
+    }
+
+    [Parameter]
+    public RenderFragment<Evaluation> ChildContent { get; set; } = evaluation => @<span style="font-weight: bold; color: dark@(evaluation.Result switch { Result.Success => "green", Result.Failure => "red", _ => "yellow" })">@evaluation.Information</span>;
+
+    TValidationData StoredData { get; set; }
+
+    Validation<TValidationData> Reference { get; set; }
+
+    Evaluator<TValidationData> Evaluator { get; set; }
+
+    bool Altered { get; set; } = true;
+
+    IEnumerable<Evaluation> StoredResults { get; set; }
+
+    IEnumerable<Evaluation> GetResults()
+    {
+        Altered = false;
+
+        StoredResults = Evaluator.Invoke(Data).GetFormattedEvaluations(Identifier, !DisableContextAwareIdentifierModification);
+        ValidatorStateModificationHandler.Invoke();
+
+        return StoredResults;
+    }
+
+    public IEnumerable<Evaluation> Results => Altered ? GetResults() : StoredResults;
+}

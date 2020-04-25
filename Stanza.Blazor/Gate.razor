@@ -1,0 +1,81 @@
+﻿@implements IGate
+@typeparam TData
+
+@inject Microsoft.JSInterop.IJSRuntime JSRuntime
+
+<CascadingValue Name="Gate" Value="this" IsFixed>
+    @if (Summarize && ShowResultsAsHeader)
+    {
+        @Summarization((Results, this))
+    }
+
+    @ChildContent(this)
+
+    @if (Summarize && !ShowResultsAsHeader)
+    {
+        @Summarization((Results, this))
+    }
+</CascadingValue>
+
+@code
+{      
+    [Parameter]
+    public RenderFragment<Gate<TData>> ChildContent { get; set; }
+
+    [Parameter]
+    public RenderFragment<(RenderFragment Results, Gate<TData> Gate)> Summarization { get; set; } = context => 
+    @<text>
+        <div style="background-color: #e2e2e2; padding: 20px">
+            @if (context.Gate.FailedValidation)
+            {
+                <h3 style="color: darkred; margin-bottom: 0">There were some issues.</h3>
+            }
+            else
+            {
+                <h3 style="color: darkgreen; margin-bottom: 0">You should be good!</h3>
+            }
+
+            @if (context.Gate.ChildEvaluationViews.SelectMany(child => child.Results).Any(evaluation => evaluation.Information is { }))
+            {
+                <br />
+            }
+
+            @context.Results
+        </div>
+
+        <br />
+    </text>;
+
+    [Parameter]
+    public bool Summarize { get; set; }
+
+    [Parameter]
+    public bool ShowResultsAsHeader { get; set; }
+
+    [Parameter]
+    public TData Data
+    {
+        get => StoredData;
+        set => StoredData ??= value;
+    }
+
+    TData StoredData { get; set; }
+
+    public Action StateModificationHandler => StateHasChanged;
+
+    public HashSet<IEvaluationView> ChildEvaluationViews { get; } = new HashSet<IEvaluationView> { };
+
+    public bool FailedValidation => ChildEvaluationViews.SelectMany(child => child.Results).Any(evaluation => evaluation.Result == Result.Failure);
+
+    RenderFragment Results =>
+    @<text>
+        @foreach (IEvaluationView message in ChildEvaluationViews)
+        {
+            foreach (Evaluation evaluation in message.Results.Where(evaluation => evaluation.Information is { }))
+            {
+                @message.ChildContent(evaluation)
+                <br />
+            }
+        }
+    </text>;
+}

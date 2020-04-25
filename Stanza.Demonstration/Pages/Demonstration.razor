@@ -1,0 +1,111 @@
+﻿@page "/demonstration"
+
+@using Stanza;
+@using Stanza.Blazor;
+@using static Stanza.Definitions.Provided; 
+
+<h1>Stanza Validation in Blazor</h1>
+
+<form onsubmit="return false">
+    <Gate Data="@(new Profile { User = new User { Name = new Name { First = "", Last = "" } }, Bio = "", Site = "", Remember = false })" Context="validator" Summarize ShowResultsAsHeader>
+        <label for="first-name-input">Your First Name</label>
+        <input id="first-name-input" @bind="validator.Data.User.Name.First" @bind:event="oninput" type="text" />
+        <EvaluationView Data="validator.Data.User.Name.First" Validations="Hydrated.Combine(Range(3..5))" Identifier="Your first name" />
+
+        <br />
+
+        <label for="last-name-input">Your Last Name</label>
+        <input id="last-name-input" @bind="validator.Data.User.Name.Last" @bind:event="oninput" type="text" />
+        <EvaluationView Data="validator.Data.User.Name.Last" Validations="Hydrated.Combine(Range(7..15))" Identifier="Your last name" />
+
+        <br />
+
+        <label for="bio-input">Some Things About You</label>
+        <br />
+        <textarea id="bio-input" @bind="validator.Data.Bio" @bind:event="oninput" maxlength="200" />
+        <EvaluationView Data="validator.Data.Bio" Validations="Hydrated.Combine(Wobble)" Identifier="Your bio" />
+
+        <br />
+
+        <label for="site-input">Your Home Page</label>
+        <input id="site-input" @bind="validator.Data.Site" @bind:event="oninput" type="url" />
+        <EvaluationView Data="validator.Data.Site" Validations="Hydrated.Combine(Length((11, true)))" Identifier="Your home page" />
+
+        <br />
+
+        <label for="remember-input">Should We Remember You Here?</label>
+        <input id="remember-input" @bind="validator.Data.Remember" type="checkbox" />
+        
+        <br />
+
+        <button type="submit" class="btn btn-success" disabled="@validator.FailedValidation" @onclick="() => Data = validator.Data">Submit</button>
+        <button type="reset" class="btn btn-danger">Reset</button>
+    </Gate>
+</form>
+
+<br />
+
+The received data will be shown below once one data set was successfully submitted, in order to show gating mechanism.
+
+<br />
+
+@if (Data is { })
+{
+    <h1>Recieved Data From Submission</h1> 
+    <h2>Name</h2>
+    <strong>First:</strong> @Data.User.Name.First
+    <br />
+    <strong>Last:</strong> @Data.User.Name.Last
+    <h3>Other Details</h3>
+    <strong>Bio:</strong>
+    <br />
+    @Data.Bio[..Math.Min(200, Data.Bio.Length)]
+    <br />
+    <strong>Home Page:</strong> @Data.Site
+    <br />
+    <strong>Should Be Remembered:</strong> @Data.Remember
+}
+
+@code
+{
+    // TODO: Look into making it standard for these kinds of constructs to be Lazy<Evaluation<string>>.
+
+    public static Validation<string> Wobble { get; } = new Validation<string>
+    {
+        new Validation<string>(true)
+        {
+            Hydrated,
+            value => value! switch
+            {
+                { } when value.Length % 50 != 0 => "The length of {0} must be a multiple of 50.",
+                _  => true
+            }
+        },
+        Range(4..100)
+    };
+
+    public class Name
+    {
+        public string First { get; set; }
+
+        public string Last { get; set; }
+    }
+
+    partial class User
+    {
+        public Name Name { get; set; }
+    }
+
+    class Profile
+    {
+        public User User { get; set; }
+
+        public string Bio { get; set; }
+
+        public string Site { get; set; }
+
+        public bool Remember { get; set; }
+    }
+
+    Profile Data { get; set; }
+}
