@@ -3,6 +3,24 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
         <LangVersion>latest</LangVersion>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+        <Authors>YeetLabs, TheFanatr</Authors>
+        <Version>0.1.0</Version>
+        <Company>Yeet Labs</Company>
+        <Description>Stanza is a data validation engine that aims to make validating data very easy, even when used in non-trivial situations, without being very verbose, while making it easy to combine and customize rule sets. It is an exploration of an alternate design to the Strikeout engine.</Description>
+        <PackageProjectUrl>https://github.com/YeetLabs/Stanza</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/YeetLabs/Stanza</RepositoryUrl>
+        <PackageTags>data validation SDK API form input sanitation sterilization</PackageTags>
+        <PackageReleaseNotes>This is one of the initial releases of Stanza; there may be numerous unresolved issues.</PackageReleaseNotes>
+        <Product>Stanza Validation Engine</Product>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Include="..\LICENSE.txt">
+        <Pack>True</Pack>
+        <PackagePath></PackagePath>
+      </None>
+    </ItemGroup>
 
 </Project>

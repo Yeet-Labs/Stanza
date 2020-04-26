@@ -5,6 +5,17 @@
         <RazorLangVersion>3.0</RazorLangVersion>
         <LangVersion>8.0</LangVersion>
         <LinkIncremental>false</LinkIncremental>
+        <Version>0.1.0</Version>
+        <Authors>YeetLabs, TheFanatr</Authors>
+        <Company>Yeet Labs</Company>
+        <Product>Stanza Validation Engine Blazor Extensions</Product>
+        <Description>The Blazor extensions of Stanza include a set of components that make it majorly trivial to use Stanza in Blazor.</Description>
+        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+        <PackageProjectUrl>https://github.com/YeetLabs/Stanza</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/YeetLabs/Stanza</RepositoryUrl>
+        <PackageTags>data validation SDK API form input sanitation sterilization</PackageTags>
+        <PackageReleaseNotes>This is one of the initial releases of the Stanza Blazor extensions; there may be numerous unresolved issues.</PackageReleaseNotes>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
 
@@ -16,6 +27,14 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Stanza\Stanza.csproj" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <None Include="..\LICENSE.txt">
+        <Pack>True</Pack>
+        <PackagePath></PackagePath>
+      </None>
     </ItemGroup>
 
 </Project>

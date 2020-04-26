@@ -13,6 +13,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stanza.Tests.Performance", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stanza.Blazor", "Stanza.Blazor\Stanza.Blazor.csproj", "{8D784AA4-BE29-4254-8DE3-B5CDE6C40A6F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{19FB20A7-76BD-4C5F-AF8E-FC3097290C04}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Media", "Media", "{DB50F8FA-1A7B-4756-B5EC-1ED5139CAF3D}"
+	ProjectSection(SolutionItems) = preProject
+		Media\Demonstration.gif = Media\Demonstration.gif
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +53,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DB50F8FA-1A7B-4756-B5EC-1ED5139CAF3D} = {19FB20A7-76BD-4C5F-AF8E-FC3097290C04}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C53AE0D8-53CF-4F64-AEBF-6CC8F2E13EE3}
