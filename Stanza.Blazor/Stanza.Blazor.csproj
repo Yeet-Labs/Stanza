@@ -5,7 +5,7 @@
         <RazorLangVersion>3.0</RazorLangVersion>
         <LangVersion>8.0</LangVersion>
         <LinkIncremental>false</LinkIncremental>
-        <Version>0.1.0</Version>
+        <Version>0.1.0-prerelease-0001</Version>
         <Authors>YeetLabs, TheFanatr</Authors>
         <Company>Yeet Labs</Company>
         <Product>Stanza Validation Engine Blazor Extensions</Product>
